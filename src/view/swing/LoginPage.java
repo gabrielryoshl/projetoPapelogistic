@@ -1,8 +1,8 @@
-package papelogistic;
+package view.swing;
 
-public class loginPage extends javax.swing.JPanel {
+public class LoginPage extends javax.swing.JPanel {
 
-    public loginPage() {
+    public LoginPage() {
         initComponents();
     }
 

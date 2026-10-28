@@ -1,0 +1,32 @@
+Organização do projeto Papelogistic
+
+src/
+  model/
+    entidades/   Cliente, Estoque, Financeiro, ItemPedido, Pedido, Produto e Usuario
+    dao/         Classes DAO: consultas e persistência dessas entidades
+    conexao/     Conexao: abertura da conexão JDBC com o MySQL
+  controller/
+    terminal/    TerminalController: coordenação dos menus e operações CRUD
+  view/
+    terminal/    TerminalPrincipal e TerminalView: inicialização, entrada e saída
+    swing/       Principal, LoginPage.java e LoginPage.form: interface gráfica
+  images/        Recursos usados pelo formulário Swing
+
+Padrão adotado
+
+- Pacotes e diretórios em letras minúsculas, conforme a convenção Java.
+- Classes em UpperCamelCase; classes de persistência mantêm o sufixo DAO.
+- Cada pacote corresponde à sua pasta sob src.
+- model contém dados, persistência e conexão; controller coordena as ações;
+  view contém as interfaces, agrupadas pela tecnologia de apresentação.
+- O formulário .form permanece junto da classe LoginPage para edição no NetBeans.
+- As imagens mantêm os caminhos de recurso utilizados pela interface.
+
+Execução
+
+Classe principal do terminal: view.terminal.TerminalPrincipal.
+Classe principal do Swing: view.swing.Principal.
+Configuração do banco: src/model/conexao/Conexao.java.
+O projeto NetBeans usa JDK 23; o driver JDBC deve estar em
+lib/mysql-connector-j-26.7.0.jar.
+Consulte README.md para preparação do banco e instruções de execução.

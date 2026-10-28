@@ -1,0 +1,1 @@
+O pacote controller.terminal contém TerminalController, que coordena os menus de testes e chama os DAOs em model.dao. A entrada e a saída ficam em view.terminal.TerminalView; a inicialização em view.terminal.TerminalPrincipal.
