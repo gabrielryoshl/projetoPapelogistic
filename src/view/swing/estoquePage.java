@@ -15,6 +15,9 @@ public class estoquePage extends javax.swing.JFrame {
      */
     public estoquePage() {
         initComponents();
+        pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
+        clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
+        financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));
     }
 
     /**
@@ -179,7 +182,7 @@ public class estoquePage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void estoqueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estoqueBtnActionPerformed
-        // TODO add your handling code here:
+        // O Estoque já está aberto.
     }//GEN-LAST:event_estoqueBtnActionPerformed
 
     /**

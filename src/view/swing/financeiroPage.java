@@ -15,6 +15,8 @@ public class financeiroPage extends javax.swing.JFrame {
      */
     public financeiroPage() {
         initComponents();
+        pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
+        clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
     }
 
     /**
@@ -178,7 +180,7 @@ public class financeiroPage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void estoqueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estoqueBtnActionPerformed
-        // TODO add your handling code here:
+        Navegacao.abrir(this, new estoquePage());
     }//GEN-LAST:event_estoqueBtnActionPerformed
 
     /**

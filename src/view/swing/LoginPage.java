@@ -1,9 +1,42 @@
 package view.swing;
 
+import java.awt.Window;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import papelogistic.estoquePage;
+
 public class LoginPage extends javax.swing.JPanel {
 
     public LoginPage() {
         initComponents();
+        configurarDica(txtlblEmail);
+        configurarDica(txtlblEmail1);
+    }
+
+    private void configurarDica(JTextField campo) {
+        String dica = campo.getText();
+        campo.addFocusListener(new FocusAdapter() {
+            private boolean mostrandoDica = true;
+
+            @Override
+            public void focusGained(FocusEvent evento) {
+                if (mostrandoDica) {
+                    campo.setText("");
+                    mostrandoDica = false;
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent evento) {
+                if (campo.getText().isEmpty()) {
+                    campo.setText(dica);
+                    mostrandoDica = true;
+                }
+            }
+        });
     }
 
     /**
@@ -134,7 +167,19 @@ public class LoginPage extends javax.swing.JPanel {
     }//GEN-LAST:event_txtlblEmail1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        // Credenciais fixas para testar a navegação.
+        if (!"biel".equals(txtlblEmail.getText().trim()) || !"1234".equals(txtlblEmail1.getText())) {
+            JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos.");
+            return;
+        }
+
+        Window janelaLogin = SwingUtilities.getWindowAncestor(this);
+        estoquePage estoque = new estoquePage();
+        estoque.setLocationRelativeTo(janelaLogin);
+        estoque.setVisible(true);
+        if (janelaLogin != null) {
+            janelaLogin.dispose();
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
 
