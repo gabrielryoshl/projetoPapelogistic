@@ -15,6 +15,9 @@ public class estoquePage extends javax.swing.JFrame {
      */
     public estoquePage() {
         initComponents();
+        Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::produtos, "Código", "Produto", "Categoria", "Qtd", "Preço");
+        novoProdutoBtn.addActionListener(evt -> Cadastros.produto(this, atualizarTabela));
+        atualizarTabela.run();
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
         financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));

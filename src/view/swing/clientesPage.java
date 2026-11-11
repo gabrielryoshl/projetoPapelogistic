@@ -15,6 +15,9 @@ public class clientesPage extends javax.swing.JFrame {
      */
     public clientesPage() {
         initComponents();
+        Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::clientes, "Código", "Cliente", "ID da pessoa", "Telefone", "E-mail", "CEP");
+        novoProdutoBtn.addActionListener(evt -> Cadastros.cliente(this, atualizarTabela));
+        atualizarTabela.run();
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));
     }

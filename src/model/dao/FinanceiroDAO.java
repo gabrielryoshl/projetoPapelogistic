@@ -15,7 +15,7 @@ public class FinanceiroDAO {
 
     
     public void inserir(Financeiro financeiro) {
-        String sql = "INSERT INTO Financeiro (CodFinanceiro, Caixa, ValorEntrada, ValorSaida, CodPedido) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Financeiro (CodFinanceiro, Caixa, ValorEntrada, ValorSaida, CodPedido) VALUES (NULLIF(?, 0), ?, ?, ?, NULLIF(?, 0))";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

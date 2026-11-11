@@ -15,6 +15,10 @@ public class pedidosPage extends javax.swing.JFrame {
      */
     public pedidosPage() {
         initComponents();
+        novoProdutoBtn.setText("Novo Pedido");
+        Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::pedidos, "Nº do pedido", "Código do cliente");
+        novoProdutoBtn.addActionListener(evt -> Cadastros.pedido(this, atualizarTabela));
+        atualizarTabela.run();
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
         financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));
     }

@@ -5,6 +5,10 @@ public class Produto {
 
     private int codProduto;
     private String tipo;
+    private String nomeProduto;
+
+    public String getNomeProduto() { return nomeProduto; }
+    public void setNomeProduto(String nomeProduto) { this.nomeProduto = nomeProduto; }
     private double valor;
     private int quantidade;
     

@@ -13,14 +13,17 @@ import model.entidades.Cliente;
 public class ClienteDAO {
 
     public void inserir(Cliente cliente) {
-        String sql = "INSERT INTO Cliente (cliente, nomeCliente, cidade) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Cliente (CodCliente, IdPessoa, nomeCliente, emailCliente, telefoneCliente, cep) VALUES (NULLIF(?, 0), ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, cliente.getCliente());
-            stmt.setString(2, cliente.getNomeCliente());
-            stmt.setString(3, cliente.getCidade());
+            stmt.setString(2, cliente.getIdPessoa());
+            stmt.setString(3, cliente.getNomeCliente());
+            stmt.setString(4, cliente.getEmailCliente());
+            stmt.setString(5, cliente.getTelefoneCliente());
+            stmt.setString(6, cliente.getCep());
 
             if (stmt.executeUpdate() == 0) { throw new SQLException("Nenhum registro afetado. Confira os identificadores informados."); }
             System.out.println("Cliente cadastrado com sucesso!");
@@ -41,9 +44,12 @@ public class ClienteDAO {
 
             while (rs.next()) {
                 Cliente c = new Cliente();
-                c.setCliente(rs.getInt("cliente"));
+                c.setCliente(rs.getInt("CodCliente"));
                 c.setNomeCliente(rs.getString("nomeCliente"));
-                c.setCidade(rs.getString("cidade"));
+                c.setIdPessoa(rs.getString("IdPessoa"));
+                c.setEmailCliente(rs.getString("emailCliente"));
+                c.setTelefoneCliente(rs.getString("telefoneCliente"));
+                c.setCep(rs.getString("cep"));
                 
                 clientes.add(c);
             }
@@ -57,14 +63,17 @@ public class ClienteDAO {
 
 
     public void atualizar(Cliente cliente) {
-        String sql = "UPDATE Cliente SET nomeCliente = ?, cidade = ? WHERE cliente = ?";
+        String sql = "UPDATE Cliente SET IdPessoa = ?, nomeCliente = ?, emailCliente = ?, telefoneCliente = ?, cep = ? WHERE CodCliente = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, cliente.getNomeCliente());
-            stmt.setString(2, cliente.getCidade());
-            stmt.setInt(3, cliente.getCliente()); // Identifica qual registro atualizar pelo ID (cliente)
+            stmt.setString(1, cliente.getIdPessoa());
+            stmt.setString(2, cliente.getNomeCliente());
+            stmt.setString(3, cliente.getEmailCliente());
+            stmt.setString(4, cliente.getTelefoneCliente());
+            stmt.setString(5, cliente.getCep());
+            stmt.setInt(6, cliente.getCliente());
 
             if (stmt.executeUpdate() == 0) { throw new SQLException("Nenhum registro afetado. Confira os identificadores informados."); }
             System.out.println("Cliente atualizado com sucesso!");
@@ -75,7 +84,7 @@ public class ClienteDAO {
     }
 
     public void deletar(int codCliente) {
-        String sql = "DELETE FROM Cliente WHERE cliente = ?";
+        String sql = "DELETE FROM Cliente WHERE CodCliente = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

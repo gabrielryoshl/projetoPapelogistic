@@ -14,7 +14,7 @@ import model.entidades.Pedido;
 public class PedidoDAO {
 
     public void inserir(Pedido pedido) {
-        String sql = "INSERT INTO Pedido (CodPedido, CodCliente) VALUES (?, ?)";
+        String sql = "INSERT INTO Pedido (CodPedido, CodCliente) VALUES (NULLIF(?, 0), ?)";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

@@ -8,6 +8,19 @@ package model.entidades;
     private int cliente;
     private String nomeCliente;
     private String cidade;
+    private String idPessoa;
+    private String emailCliente;
+    private String telefoneCliente;
+    private String cep;
+
+    public String getIdPessoa() { return idPessoa; }
+    public void setIdPessoa(String idPessoa) { this.idPessoa = idPessoa; }
+    public String getEmailCliente() { return emailCliente; }
+    public void setEmailCliente(String emailCliente) { this.emailCliente = emailCliente; }
+    public String getTelefoneCliente() { return telefoneCliente; }
+    public void setTelefoneCliente(String telefoneCliente) { this.telefoneCliente = telefoneCliente; }
+    public String getCep() { return cep; }
+    public void setCep(String cep) { this.cep = cep; }
 
     public Cliente() {
     }

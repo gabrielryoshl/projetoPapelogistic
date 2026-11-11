@@ -6,6 +6,10 @@ public class Estoque {
     private int codProduto;
     private int valorProduto;
     private String tipo;
+    private int quantidade;
+
+    public int getQuantidade() { return quantidade; }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
     
     public Estoque() {
     }

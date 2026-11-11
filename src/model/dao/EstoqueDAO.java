@@ -15,14 +15,13 @@ public class EstoqueDAO {
     
     public void inserir(Estoque estoque) {
        
-        String sql = "INSERT INTO Estoque (CodProduto, ValorProduto, Tipo) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Estoque (CodProduto, quantidade) VALUES (?, ?)";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, estoque.getCodProduto());
-            stmt.setInt(2, estoque.getValorProduto());
-            stmt.setString(3, estoque.getTipo());
+            stmt.setInt(2, estoque.getQuantidade());
 
             if (stmt.executeUpdate() == 0) { throw new SQLException("Nenhum registro afetado. Confira os identificadores informados."); }
             System.out.println("Item de estoque cadastrado com sucesso!");
@@ -44,8 +43,7 @@ public class EstoqueDAO {
             while (rs.next()) {
                 Estoque e = new Estoque();
                 e.setCodProduto(rs.getInt("CodProduto"));
-                e.setValorProduto(rs.getInt("ValorProduto"));
-                e.setTipo(rs.getString("Tipo"));
+                e.setQuantidade(rs.getInt("quantidade"));
                 
                 listaEstoque.add(e);
             }
@@ -59,14 +57,13 @@ public class EstoqueDAO {
 
     // 3. ATUALIZAR (UPDATE)
     public void atualizar(Estoque estoque) {
-        String sql = "UPDATE Estoque SET ValorProduto = ?, Tipo = ? WHERE CodProduto = ?";
+        String sql = "UPDATE Estoque SET quantidade = ? WHERE CodProduto = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, estoque.getValorProduto());
-            stmt.setString(2, estoque.getTipo());
-            stmt.setInt(3, estoque.getCodProduto()); 
+            stmt.setInt(1, estoque.getQuantidade());
+            stmt.setInt(2, estoque.getCodProduto());
 
             if (stmt.executeUpdate() == 0) { throw new SQLException("Nenhum registro afetado. Confira os identificadores informados."); }
             System.out.println("Estoque atualizado com sucesso!");

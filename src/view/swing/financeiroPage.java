@@ -15,6 +15,10 @@ public class financeiroPage extends javax.swing.JFrame {
      */
     public financeiroPage() {
         initComponents();
+        novoProdutoBtn.setText("Nova Despesa");
+        Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::financeiro, "Código", "Pedido", "Entrada", "Saída", "Caixa");
+        novoProdutoBtn.addActionListener(evt -> Cadastros.despesa(this, atualizarTabela));
+        atualizarTabela.run();
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
     }
