@@ -62,7 +62,7 @@ public class FinanceiroDAO {
 
   
     public void atualizar(Financeiro financeiro) {
-        String sql = "UPDATE Financeiro SET Caixa = ?, ValorEntrada = ?, ValorSaida = ?, CodPedido = ? WHERE CodFinanceiro = ?";
+        String sql = "UPDATE Financeiro SET Caixa = ?, ValorEntrada = ?, ValorSaida = ?, CodPedido = NULLIF(?, 0) WHERE CodFinanceiro = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

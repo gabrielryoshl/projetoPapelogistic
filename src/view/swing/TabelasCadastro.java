@@ -1,4 +1,4 @@
-package papelogistic;
+package view.swing;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,8 +54,11 @@ final class TabelasCadastro {
         List<Object[]> linhas = new ArrayList<>();
         for (Produto produto : new ProdutoDAO().listar()) {
             int codigo = produto.getCodProduto();
-            linhas.add(new Object[]{codigo, produto.getNomeProduto(), produto.getTipo(),
-                quantidades.getOrDefault(codigo, 0), produto.getValor()});
+            Integer quantidade = quantidades.get(codigo);
+            if (quantidade != null) {
+                linhas.add(new Object[]{codigo, produto.getNomeProduto(), produto.getTipo(),
+                    quantidade, produto.getValor()});
+            }
         }
         return linhas;
     }

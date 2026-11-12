@@ -1,4 +1,4 @@
-package papelogistic;
+package view.swing;
 
 import javax.swing.JFrame;
 

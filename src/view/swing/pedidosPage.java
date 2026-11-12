@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package papelogistic;
+package view.swing;
 
 /**
  *
@@ -17,7 +17,12 @@ public class pedidosPage extends javax.swing.JFrame {
         initComponents();
         novoProdutoBtn.setText("Novo Pedido");
         Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::pedidos, "Nº do pedido", "Código do cliente");
-        novoProdutoBtn.addActionListener(evt -> Cadastros.pedido(this, atualizarTabela));
+        novoProdutoBtn.addActionListener(evt -> Cadastros.pedido(this, atualizarTabela, null));
+        editarBtn.setText("Editar");
+        excluirBtn.setText("Excluir");
+        editarBtn.addActionListener(evt -> Cadastros.editar(this, tabelaTB, linha -> Cadastros.pedido(this, atualizarTabela, linha)));
+        excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
+            "Excluir o pedido selecionado e seus itens? Lançamentos vinculados ficarão sem pedido.", new model.dao.PedidoDAO()::deletar));
         atualizarTabela.run();
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
         financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));

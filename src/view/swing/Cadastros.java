@@ -1,12 +1,14 @@
-package papelogistic;
+package view.swing;
 
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.math.BigDecimal;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import model.dao.ClienteDAO;
 import model.dao.FinanceiroDAO;
@@ -21,8 +23,10 @@ final class Cadastros {
     private Cadastros() {
     }
 
-    static void produto(Component tela, Runnable atualizarTabela) {
-        abrir(tela, "Novo Produto", atualizarTabela, campos -> {
+    static void produto(Component tela, Runnable atualizarTabela, Object[] linha) {
+        boolean editando = linha != null;
+        Object[] valores = editando ? new Object[]{linha[1], linha[2], linha[4], linha[3]} : null;
+        abrir(tela, editando ? "Editar Produto" : "Novo Produto", atualizarTabela, valores, campos -> {
             Produto produto = new Produto();
             produto.setNomeProduto(obrigatorio(campos[0], "Nome"));
             produto.setTipo(obrigatorio(campos[1], "Categoria"));
@@ -31,13 +35,21 @@ final class Cadastros {
                 throw new IllegalArgumentException("O preço não pode ser negativo.");
             }
             produto.setValor(preco);
-            int quantidade = inteiro(campos[3], "Quantidade inicial", 0);
-            new ProdutoDAO().inserirComEstoque(produto, quantidade);
-        }, "Nome", "Categoria", "Preço", "Quantidade inicial");
+            int quantidade = inteiro(campos[3], "Quantidade", 0);
+            ProdutoDAO dao = new ProdutoDAO();
+            if (editando) {
+                produto.setCodProduto((Integer) linha[0]);
+                dao.atualizarComEstoque(produto, quantidade);
+            } else {
+                dao.inserirComEstoque(produto, quantidade);
+            }
+        }, "Nome", "Categoria", "Preço", editando ? "Quantidade" : "Quantidade inicial");
     }
 
-    static void cliente(Component tela, Runnable atualizarTabela) {
-        abrir(tela, "Novo Cliente", atualizarTabela, campos -> {
+    static void cliente(Component tela, Runnable atualizarTabela, Object[] linha) {
+        boolean editando = linha != null;
+        Object[] valores = editando ? new Object[]{linha[1], linha[2], linha[4], linha[3], linha[5]} : null;
+        abrir(tela, editando ? "Editar Cliente" : "Novo Cliente", atualizarTabela, valores, campos -> {
             Cliente cliente = new Cliente();
             cliente.setNomeCliente(obrigatorio(campos[0], "Nome"));
             cliente.setIdPessoa(obrigatorio(campos[1], "ID da pessoa"));
@@ -51,20 +63,34 @@ final class Cadastros {
                 }
             }
             cliente.setCep(cep);
-            new ClienteDAO().inserir(cliente);
+            ClienteDAO dao = new ClienteDAO();
+            if (editando) {
+                cliente.setCliente((Integer) linha[0]);
+                dao.atualizar(cliente);
+            } else {
+                dao.inserir(cliente);
+            }
         }, "Nome", "ID da pessoa", "E-mail (opcional)", "Telefone (opcional)", "CEP (opcional)");
     }
 
-    static void pedido(Component tela, Runnable atualizarTabela) {
-        abrir(tela, "Novo Pedido", atualizarTabela, campos -> {
+    static void pedido(Component tela, Runnable atualizarTabela, Object[] linha) {
+        boolean editando = linha != null;
+        Object[] valores = editando ? new Object[]{linha[1]} : null;
+        abrir(tela, editando ? "Editar Pedido" : "Novo Pedido", atualizarTabela, valores, campos -> {
             Pedido pedido = new Pedido();
             pedido.setCodCliente(inteiro(campos[0], "Código do cliente", 1));
-            new PedidoDAO().inserir(pedido);
+            PedidoDAO dao = new PedidoDAO();
+            if (editando) {
+                pedido.setCodPedido((Integer) linha[0]);
+                dao.atualizar(pedido);
+            } else {
+                dao.inserir(pedido);
+            }
         }, "Código do cliente");
     }
 
     static void despesa(Component tela, Runnable atualizarTabela) {
-        abrir(tela, "Nova Despesa", atualizarTabela, campos -> {
+        abrir(tela, "Nova Despesa", atualizarTabela, null, campos -> {
             double valor = decimal(campos[0], "Valor da despesa");
             if (valor <= 0) {
                 throw new IllegalArgumentException("O valor da despesa deve ser maior que zero.");
@@ -79,19 +105,77 @@ final class Cadastros {
         }, "Valor da despesa", "Caixa após a despesa", "Código do pedido (opcional)");
     }
 
-    private static void abrir(Component tela, String titulo, Runnable atualizarTabela,
+    static void editarFinanceiro(Component tela, JTable tabela, Runnable atualizarTabela) {
+        editar(tela, tabela, linha -> {
+            Object[] valores = {linha[2], linha[3], linha[4], linha[1]};
+            abrir(tela, "Editar Lançamento", atualizarTabela, valores, campos -> {
+                Financeiro registro = new Financeiro();
+                registro.setCodFinanceiro((Integer) linha[0]);
+                double entrada = decimal(campos[0], "Entrada");
+                double saida = decimal(campos[1], "Saída");
+                if (entrada < 0 || saida < 0) {
+                    throw new IllegalArgumentException("Entrada e saída não podem ser negativas.");
+                }
+                registro.setValorEntrada(entrada);
+                registro.setValorSaida(saida);
+                registro.setCaixa(decimal(campos[2], "Caixa"));
+                if (opcional(campos[3]) != null) {
+                    registro.setCodPedido(inteiro(campos[3], "Código do pedido", 1));
+                }
+                new FinanceiroDAO().atualizar(registro);
+            }, "Entrada", "Saída", "Caixa", "Código do pedido (opcional)");
+        });
+    }
+
+    static void editar(Component tela, JTable tabela, Consumer<Object[]> abrirEdicao) {
+        int selecionada = tabela.getSelectedRow();
+        if (selecionada < 0) {
+            JOptionPane.showMessageDialog(tela, "Selecione um registro na tabela.");
+            return;
+        }
+        int indice = tabela.convertRowIndexToModel(selecionada);
+        Object[] linha = new Object[tabela.getModel().getColumnCount()];
+        for (int coluna = 0; coluna < linha.length; coluna++) {
+            linha[coluna] = tabela.getModel().getValueAt(indice, coluna);
+        }
+        abrirEdicao.accept(linha);
+    }
+
+    static void excluir(Component tela, JTable tabela, Runnable atualizarTabela, String mensagem, IntConsumer apagar) {
+        editar(tela, tabela, linha -> {
+            int codigo = (Integer) linha[0];
+            int resposta = JOptionPane.showConfirmDialog(tela, mensagem + "\nCódigo: " + codigo,
+                "Confirmar exclusão", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            if (resposta != JOptionPane.YES_OPTION) {
+                return;
+            }
+            try {
+                apagar.accept(codigo);
+            } catch (IllegalStateException erro) {
+                JOptionPane.showMessageDialog(tela, erro.getMessage(), "Exclusão", JOptionPane.ERROR_MESSAGE);
+            }
+            atualizarTabela.run();
+        });
+    }
+
+    private static void abrir(Component tela, String titulo, Runnable atualizarTabela, Object[] valores,
             Consumer<JTextField[]> salvar, String... rotulos) {
         JPanel painel = new JPanel(new GridLayout(0, 2, 8, 8));
         JTextField[] campos = new JTextField[rotulos.length];
         for (int i = 0; i < rotulos.length; i++) {
             campos[i] = new JTextField(18);
+            if (valores != null && valores[i] != null) {
+                Object valor = valores[i];
+                campos[i].setText(valor instanceof Double decimal
+                    ? BigDecimal.valueOf(decimal).stripTrailingZeros().toPlainString() : valor.toString());
+            }
             JLabel rotulo = new JLabel(rotulos[i]);
             rotulo.setLabelFor(campos[i]);
             painel.add(rotulo);
             painel.add(campos[i]);
         }
 
-        Object[] opcoes = {"Cadastrar", "Cancelar"};
+        Object[] opcoes = {valores == null ? "Cadastrar" : "Salvar", "Cancelar"};
         while (JOptionPane.showOptionDialog(tela, painel, titulo, JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.PLAIN_MESSAGE, null, opcoes, opcoes[0]) == JOptionPane.OK_OPTION) {
             try {
@@ -101,7 +185,7 @@ final class Cadastros {
                 continue;
             }
             atualizarTabela.run();
-            JOptionPane.showMessageDialog(tela, "Cadastro concluído.");
+            JOptionPane.showMessageDialog(tela, valores == null ? "Cadastro concluído." : "Alterações salvas.");
             return;
         }
     }

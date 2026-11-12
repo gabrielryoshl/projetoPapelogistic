@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package papelogistic;
+package view.swing;
 
 /**
  *
@@ -18,6 +18,9 @@ public class financeiroPage extends javax.swing.JFrame {
         novoProdutoBtn.setText("Nova Despesa");
         Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::financeiro, "Código", "Pedido", "Entrada", "Saída", "Caixa");
         novoProdutoBtn.addActionListener(evt -> Cadastros.despesa(this, atualizarTabela));
+        editarBtn.addActionListener(evt -> Cadastros.editarFinanceiro(this, tabelaTB, atualizarTabela));
+        excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
+            "Excluir o lançamento selecionado?", new model.dao.FinanceiroDAO()::deletar));
         atualizarTabela.run();
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));

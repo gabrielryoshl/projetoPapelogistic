@@ -111,6 +111,24 @@ public class ProdutoDAO {
     }
 
     
+    public void atualizarComEstoque(Produto produto, int quantidade) {
+        String sql = "UPDATE Produto p JOIN Estoque e ON e.CodProduto = p.CodProduto "
+            + "SET p.nomeProduto = ?, p.tipo = ?, p.valor = ?, e.quantidade = ? WHERE p.CodProduto = ?";
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, produto.getNomeProduto());
+            stmt.setString(2, produto.getTipo());
+            stmt.setDouble(3, produto.getValor());
+            stmt.setInt(4, quantidade);
+            stmt.setInt(5, produto.getCodProduto());
+            if (stmt.executeUpdate() == 0) {
+                throw new SQLException("O item não está mais no estoque.");
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException("Erro ao editar o item de estoque: " + e.getMessage(), e);
+        }
+    }
+
     public void deletar(int codProduto) {
         String sql = "DELETE FROM Produto WHERE CodProduto = ?";
 

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package papelogistic;
+package view.swing;
 
 /**
  *
@@ -16,7 +16,10 @@ public class clientesPage extends javax.swing.JFrame {
     public clientesPage() {
         initComponents();
         Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::clientes, "Código", "Cliente", "ID da pessoa", "Telefone", "E-mail", "CEP");
-        novoProdutoBtn.addActionListener(evt -> Cadastros.cliente(this, atualizarTabela));
+        novoProdutoBtn.addActionListener(evt -> Cadastros.cliente(this, atualizarTabela, null));
+        editarBtn.addActionListener(evt -> Cadastros.editar(this, tabelaTB, linha -> Cadastros.cliente(this, atualizarTabela, linha)));
+        excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
+            "Excluir o cliente selecionado?", new model.dao.ClienteDAO()::deletar));
         atualizarTabela.run();
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));

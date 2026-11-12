@@ -6,7 +6,6 @@ import java.awt.event.FocusEvent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import papelogistic.estoquePage;
 
 public class LoginPage extends javax.swing.JPanel {
 

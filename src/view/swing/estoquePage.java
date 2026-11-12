@@ -2,21 +2,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package papelogistic;
+package view.swing;
 
 /**
  *
  * @author gabriel.apereira22
  */
 public class estoquePage extends javax.swing.JFrame {
+    private final Runnable atualizarTabela;
 
     /**
      * Creates new form estoquePage
      */
     public estoquePage() {
         initComponents();
-        Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::produtos, "Código", "Produto", "Categoria", "Qtd", "Preço");
-        novoProdutoBtn.addActionListener(evt -> Cadastros.produto(this, atualizarTabela));
+        atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::produtos, "Código", "Produto", "Categoria", "Qtd", "Preço");
+        novoProdutoBtn.addActionListener(evt -> Cadastros.produto(this, atualizarTabela, null));
+        editarBtn.addActionListener(evt -> Cadastros.editar(this, tabelaTB, linha -> Cadastros.produto(this, atualizarTabela, linha)));
+        excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
+            "Remover o item do estoque?", new model.dao.EstoqueDAO()::deletar));
         atualizarTabela.run();
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
@@ -51,7 +55,7 @@ public class estoquePage extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 249, 237));
         setPreferredSize(new java.awt.Dimension(1280, 720));
 
-        tabelaTB.setBorder(javax.swing.BorderFactory.createLineBorder(null));
+        tabelaTB.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         tabelaTB.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -185,7 +189,7 @@ public class estoquePage extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void estoqueBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_estoqueBtnActionPerformed
-        // O Estoque já está aberto.
+        atualizarTabela.run();
     }//GEN-LAST:event_estoqueBtnActionPerformed
 
     /**
