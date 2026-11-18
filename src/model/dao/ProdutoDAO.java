@@ -27,7 +27,7 @@ public class ProdutoDAO {
             conn.setAutoCommit(false);
             try {
                 int codigo = inserirProduto(conn, produto);
-                String sql = "INSERT INTO Estoque (CodProduto, quantidade) VALUES (?, ?)";
+                String sql = "INSERT INTO estoque (CodProduto, quantidade) VALUES (?, ?)";
                 try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                     stmt.setInt(1, codigo);
                     stmt.setInt(2, quantidade);
@@ -44,7 +44,7 @@ public class ProdutoDAO {
     }
 
     private int inserirProduto(Connection conn, Produto produto) throws SQLException {
-        String sql = "INSERT INTO Produto (CodProduto, nomeProduto, tipo, valor) VALUES (NULLIF(?, 0), ?, ?, ?)";
+        String sql = "INSERT INTO produto (CodProduto, nomeProduto, tipo, valor) VALUES (NULLIF(?, 0), ?, ?, ?)";
 
         try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -67,7 +67,7 @@ public class ProdutoDAO {
     }
 
     public List<Produto> listar() {
-        String sql = "SELECT * FROM Produto";
+        String sql = "SELECT * FROM produto";
         List<Produto> produtos = new ArrayList<>();
 
         try (Connection conn = Conexao.conectar();
@@ -92,7 +92,7 @@ public class ProdutoDAO {
     }
 
     public void atualizar(Produto produto) {
-        String sql = "UPDATE Produto SET nomeProduto = ?, tipo = ?, valor = ? WHERE CodProduto = ?";
+        String sql = "UPDATE produto SET nomeProduto = ?, tipo = ?, valor = ? WHERE CodProduto = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -112,7 +112,7 @@ public class ProdutoDAO {
 
     
     public void atualizarComEstoque(Produto produto, int quantidade) {
-        String sql = "UPDATE Produto p JOIN Estoque e ON e.CodProduto = p.CodProduto "
+        String sql = "UPDATE produto p JOIN estoque e ON e.CodProduto = p.CodProduto "
             + "SET p.nomeProduto = ?, p.tipo = ?, p.valor = ?, e.quantidade = ? WHERE p.CodProduto = ?";
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -130,15 +130,28 @@ public class ProdutoDAO {
     }
 
     public void deletar(int codProduto) {
-        String sql = "DELETE FROM Produto WHERE CodProduto = ?";
+        String sqlEstoque = "DELETE FROM estoque WHERE CodProduto = ?";
+        String sqlProduto = "DELETE FROM produto WHERE CodProduto = ?";
 
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, codProduto);
-            if (stmt.executeUpdate() == 0) { throw new SQLException("Nenhum registro afetado. Confira os identificadores informados."); }
-            System.out.println("Produto excluído com sucesso!");
-
+        try (Connection conn = Conexao.conectar()) {
+            conn.setAutoCommit(false);
+            try {
+                try (PreparedStatement stmtEstoque = conn.prepareStatement(sqlEstoque)) {
+                    stmtEstoque.setInt(1, codProduto);
+                    stmtEstoque.executeUpdate();
+                }
+                try (PreparedStatement stmtProduto = conn.prepareStatement(sqlProduto)) {
+                    stmtProduto.setInt(1, codProduto);
+                    if (stmtProduto.executeUpdate() == 0) {
+                        throw new SQLException("Nenhum registro afetado. Confira os identificadores informados.");
+                    }
+                }
+                conn.commit();
+                System.out.println("Produto excluído com sucesso!");
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
         } catch (SQLException e) {
             throw new IllegalStateException("Erro ao excluir produto: " + e.getMessage(), e);
         }

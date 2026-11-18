@@ -15,7 +15,7 @@ public class EstoqueDAO {
     
     public void inserir(Estoque estoque) {
        
-        String sql = "INSERT INTO Estoque (CodProduto, quantidade) VALUES (?, ?)";
+        String sql = "INSERT INTO estoque (CodProduto, quantidade) VALUES (?, ?)";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -33,7 +33,7 @@ public class EstoqueDAO {
 
     // 2. LISTAR TODOS (SELECT)
     public List<Estoque> listar() {
-        String sql = "SELECT * FROM Estoque";
+        String sql = "SELECT * FROM estoque";
         List<Estoque> listaEstoque = new ArrayList<>();
 
         try (Connection conn = Conexao.conectar();
@@ -57,7 +57,7 @@ public class EstoqueDAO {
 
     // 3. ATUALIZAR (UPDATE)
     public void atualizar(Estoque estoque) {
-        String sql = "UPDATE Estoque SET quantidade = ? WHERE CodProduto = ?";
+        String sql = "UPDATE estoque SET quantidade = ? WHERE CodProduto = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -75,7 +75,7 @@ public class EstoqueDAO {
 
   
     public void deletar(int codProduto) {
-        String sql = "DELETE FROM Estoque WHERE CodProduto = ?";
+        String sql = "DELETE FROM estoque WHERE CodProduto = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

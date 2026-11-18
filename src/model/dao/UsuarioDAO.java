@@ -14,7 +14,7 @@ import model.entidades.Usuario;
 public class UsuarioDAO {
 
     public void inserir(Usuario usuario) {
-        String sql = "INSERT INTO Usuario (login_simples, senha, nome, telefoneUsuario, emailUsuario) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO usuario (login_simples, senha, nome, telefoneUsuario, emailUsuario) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -33,7 +33,7 @@ public class UsuarioDAO {
     }
 
     public List<Usuario> listar() {
-        String sql = "SELECT * FROM Usuario";
+        String sql = "SELECT * FROM usuario";
         List<Usuario> listaUsuario = new ArrayList<>();
 
         try (Connection conn = Conexao.conectar();
@@ -59,7 +59,7 @@ public class UsuarioDAO {
     }
 
     public void atualizar(Usuario usuario) {
-        String sql = "UPDATE Usuario SET senha = ?, nome = ?, telefoneUsuario = ?, emailUsuario = ? WHERE login_simples = ?";
+        String sql = "UPDATE usuario SET senha = ?, nome = ?, telefoneUsuario = ?, emailUsuario = ? WHERE login_simples = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -78,7 +78,7 @@ public class UsuarioDAO {
     }
 
     public void deletar(String loginSimples) {
-        String sql = "DELETE FROM Usuario WHERE login_simples = ?";
+        String sql = "DELETE FROM usuario WHERE login_simples = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -88,6 +88,25 @@ public class UsuarioDAO {
 
         } catch (SQLException e) {
             throw new IllegalStateException("Erro ao excluir usuario: " + e.getMessage(), e);
+        }
+    }
+
+    public boolean autenticar(String login, String senha) {
+        String sql = "SELECT 1 FROM usuario WHERE (login_simples = ? OR emailUsuario = ?) AND senha = ?";
+
+        try (Connection conn = Conexao.conectar();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, login);
+            stmt.setString(2, login);
+            stmt.setString(3, senha);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Erro ao autenticar usuario: " + e.getMessage(), e);
         }
     }
 }

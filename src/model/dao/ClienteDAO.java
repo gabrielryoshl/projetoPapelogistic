@@ -13,7 +13,7 @@ import model.entidades.Cliente;
 public class ClienteDAO {
 
     public void inserir(Cliente cliente) {
-        String sql = "INSERT INTO Cliente (CodCliente, IdPessoa, nomeCliente, emailCliente, telefoneCliente, cep) VALUES (NULLIF(?, 0), ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO cliente (CodCliente, IdPessoa, nomeCliente, emailCliente, telefoneCliente, cep) VALUES (NULLIF(?, 0), ?, ?, ?, ?, ?)";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -35,7 +35,7 @@ public class ClienteDAO {
 
 
     public List<Cliente> listar() {
-        String sql = "SELECT * FROM Cliente";
+        String sql = "SELECT * FROM cliente";
         List<Cliente> clientes = new ArrayList<>();
 
         try (Connection conn = Conexao.conectar();
@@ -63,7 +63,7 @@ public class ClienteDAO {
 
 
     public void atualizar(Cliente cliente) {
-        String sql = "UPDATE Cliente SET IdPessoa = ?, nomeCliente = ?, emailCliente = ?, telefoneCliente = ?, cep = ? WHERE CodCliente = ?";
+        String sql = "UPDATE cliente SET IdPessoa = ?, nomeCliente = ?, emailCliente = ?, telefoneCliente = ?, cep = ? WHERE CodCliente = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -84,7 +84,7 @@ public class ClienteDAO {
     }
 
     public void deletar(int codCliente) {
-        String sql = "DELETE FROM Cliente WHERE CodCliente = ?";
+        String sql = "DELETE FROM cliente WHERE CodCliente = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

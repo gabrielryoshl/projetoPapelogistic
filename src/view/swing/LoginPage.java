@@ -6,6 +6,7 @@ import java.awt.event.FocusEvent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import model.dao.UsuarioDAO;
 
 public class LoginPage extends javax.swing.JPanel {
 
@@ -166,8 +167,18 @@ public class LoginPage extends javax.swing.JPanel {
     }//GEN-LAST:event_txtlblEmail1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // Credenciais fixas para testar a navegação.
-        if (!"biel".equals(txtlblEmail.getText().trim()) || !"1234".equals(txtlblEmail1.getText())) {
+        String login = txtlblEmail.getText().trim();
+        String senha = txtlblEmail1.getText();
+        boolean autenticado = "biel".equals(login) && "1234".equals(senha);
+        if (!autenticado) {
+            try {
+                autenticado = new UsuarioDAO().autenticar(login, senha);
+            } catch (IllegalStateException erro) {
+                JOptionPane.showMessageDialog(this, erro.getMessage(), "Login", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        if (!autenticado) {
             JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos.");
             return;
         }

@@ -50,10 +50,10 @@ As classes usam UpperCamelCase; `LoginPage.java` e `LoginPage.form` permanecem
 juntos para edição visual no NetBeans. Consulte [ORGANIZACAO-MVC.txt](ORGANIZACAO-MVC.txt)
 para os nomes das classes e suas responsabilidades.
 
-## Terminal de testes de conexão e CRUD
+## Execução e Terminal de testes
 
-Execute o projeto no NetBeans (F6). A classe principal é `view.terminal.TerminalPrincipal`.
-A interface Swing está disponível em `view.swing.Principal`.
+Execute o projeto no NetBeans (F6). A classe principal da aplicação é `view.swing.Principal` (interface Swing).
+O menu de testes no terminal também está disponível em `view.terminal.TerminalPrincipal`.
 
 O menu permite testar a conexão e cadastrar, listar, atualizar e excluir Cliente,
 Produto, Usuario, Estoque, Pedido, ItemPedido e Financeiro. Atualizações solicitam
@@ -64,10 +64,9 @@ Erros do banco retornam ao menu principal. Registros não afetados são informad
 
 ### Preparação do banco
 
-- Instale o JDK 23, configurado no projeto NetBeans.
-- Coloque o driver JDBC MySQL em `lib/mysql-connector-j-26.7.0.jar`.
-- Inicie o MySQL e disponibilize o banco `Papelogistic` com as tabelas esperadas
-  pelos DAOs. O ZIP original não contém o script SQL de criação das tabelas.
+- Instale o JDK 17, configurado no projeto NetBeans.
+- Verifique o driver JDBC MySQL em `lib/mysql-connector-j-26.10.0.jar`.
+- Inicie o MySQL/MariaDB (XAMPP) e importe `papelogistic.sql` para criar o banco `papelogistic` e as tabelas.
 - Confira URL, usuário e senha em `src/model/conexao/Conexao.java`.
   O padrão atual é localhost:3306, usuário root e senha vazia.
 - Cadastre os registros referenciados antes dos pedidos e itens, conforme as
@@ -80,12 +79,11 @@ New-Item -ItemType Directory -Force build/classes | Out-Null
 Get-ChildItem src -Recurse -Filter *.java | ForEach-Object { '"' + $_.FullName.Replace('\', '/') + '"' } | Set-Content -Encoding utf8 fontes.txt
 javac -encoding UTF-8 -d build/classes '@fontes.txt'
 Copy-Item src/images build/classes/images -Recurse -Force
-java -cp 'build/classes;lib/*' view.terminal.TerminalPrincipal
+java -cp 'build/classes;lib/*' view.swing.Principal
 ```
 
 ### Validação realizada
 
-As classes foram compiladas com o JDK 19 disponível no ambiente. Foram exercitados
+As classes foram compiladas com Java 17. Foram exercitados
 menus, validação de números, decimais com vírgula, cancelamento de exclusão,
-encerramento da entrada e tratamento de ausência do driver. A compilação com o
-alvo 23 pelo NetBeans e o CRUD com MySQL real dependem da preparação acima.
+encerramento da entrada e tratamento de ausência do driver.

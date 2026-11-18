@@ -24,9 +24,9 @@ Padrão adotado
 
 Execução
 
+Classe principal do Swing (padrão do projeto): view.swing.Principal.
 Classe principal do terminal: view.terminal.TerminalPrincipal.
-Classe principal do Swing: view.swing.Principal.
 Configuração do banco: src/model/conexao/Conexao.java.
-O projeto NetBeans usa JDK 23; o driver JDBC deve estar em
-lib/mysql-connector-j-26.7.0.jar.
+O projeto NetBeans usa JDK 17; o driver JDBC está em
+lib/mysql-connector-j-26.10.0.jar.
 Consulte README.md para preparação do banco e instruções de execução.

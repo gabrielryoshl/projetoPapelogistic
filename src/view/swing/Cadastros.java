@@ -12,10 +12,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import model.dao.ClienteDAO;
 import model.dao.FinanceiroDAO;
+import model.dao.ItemPedidoDAO;
 import model.dao.PedidoDAO;
 import model.dao.ProdutoDAO;
 import model.entidades.Cliente;
 import model.entidades.Financeiro;
+import model.entidades.ItemPedido;
 import model.entidades.Pedido;
 import model.entidades.Produto;
 
@@ -75,56 +77,93 @@ final class Cadastros {
 
     static void pedido(Component tela, Runnable atualizarTabela, Object[] linha) {
         boolean editando = linha != null;
-        Object[] valores = editando ? new Object[]{linha[1]} : null;
+        Object[] valores = editando
+            ? (linha.length >= 5 ? new Object[]{linha[1], linha[2], linha[3], linha[4]} : new Object[]{linha[1], null, null, null})
+            : null;
         abrir(tela, editando ? "Editar Pedido" : "Novo Pedido", atualizarTabela, valores, campos -> {
             Pedido pedido = new Pedido();
             pedido.setCodCliente(inteiro(campos[0], "Código do cliente", 1));
+            boolean temProduto = opcional(campos[1]) != null;
+            boolean temQuantidade = opcional(campos[2]) != null;
+            boolean temValor = opcional(campos[3]) != null;
+            ItemPedido item = null;
+            if (temProduto || temQuantidade || temValor) {
+                item = new ItemPedido();
+                item.setCodProduto(inteiro(campos[1], "Código do produto", 1));
+                item.setQuantidade(inteiro(campos[2], "Quantidade", 1));
+                double valorUnitario = decimal(campos[3], "Valor unitário");
+                if (valorUnitario < 0) {
+                    throw new IllegalArgumentException("O valor unitário não pode ser negativo.");
+                }
+                item.setValorUnitario(valorUnitario);
+            }
             PedidoDAO dao = new PedidoDAO();
+            ItemPedidoDAO itemDao = new ItemPedidoDAO();
             if (editando) {
-                pedido.setCodPedido((Integer) linha[0]);
+                int codPedido = (Integer) linha[0];
+                pedido.setCodPedido(codPedido);
                 dao.atualizar(pedido);
+                Integer produtoAnterior = linha.length >= 3 ? (Integer) linha[2] : null;
+                if (item == null) {
+                    if (produtoAnterior != null) {
+                        itemDao.deletar(codPedido, produtoAnterior);
+                    }
+                } else {
+                    item.setCodPedido(codPedido);
+                    if (produtoAnterior == null) {
+                        itemDao.inserir(item);
+                    } else if (!produtoAnterior.equals(item.getCodProduto())) {
+                        itemDao.deletar(codPedido, produtoAnterior);
+                        itemDao.inserir(item);
+                    } else {
+                        itemDao.atualizar(item);
+                    }
+                }
             } else {
                 dao.inserir(pedido);
+                if (item != null) {
+                    item.setCodPedido(pedido.getCodPedido());
+                    itemDao.inserir(item);
+                }
             }
-        }, "Código do cliente");
+        }, "Código do cliente", "Código do produto (opcional)", "Quantidade (opcional)", "Valor unitário (opcional)");
+    }
+
+    static void financeiro(Component tela, Runnable atualizarTabela, Object[] linha) {
+        boolean editando = linha != null;
+        Object[] valores = editando ? new Object[]{linha[2], linha[3], linha[4], linha[1]} : null;
+        abrir(tela, editando ? "Editar Lançamento" : "Novo Lançamento", atualizarTabela, valores, campos -> {
+            Financeiro registro = new Financeiro();
+            double entrada = opcional(campos[0]) == null ? 0.0 : decimal(campos[0], "Entrada");
+            double saida = opcional(campos[1]) == null ? 0.0 : decimal(campos[1], "Saída");
+            if (entrada < 0 || saida < 0) {
+                throw new IllegalArgumentException("Entrada e saída não podem ser negativas.");
+            }
+            if (!editando && entrada == 0 && saida == 0) {
+                throw new IllegalArgumentException("Informe um valor de entrada ou de saída maior que zero.");
+            }
+            registro.setValorEntrada(entrada);
+            registro.setValorSaida(saida);
+            registro.setCaixa(decimal(campos[2], "Caixa"));
+            if (opcional(campos[3]) != null) {
+                registro.setCodPedido(inteiro(campos[3], "Código do pedido", 1));
+            }
+            FinanceiroDAO dao = new FinanceiroDAO();
+            if (editando) {
+                registro.setCodFinanceiro((Integer) linha[0]);
+                dao.atualizar(registro);
+            } else {
+                dao.inserir(registro);
+            }
+        }, "Entrada", "Saída", "Caixa", "Código do pedido (opcional)");
     }
 
     static void despesa(Component tela, Runnable atualizarTabela) {
-        abrir(tela, "Nova Despesa", atualizarTabela, null, campos -> {
-            double valor = decimal(campos[0], "Valor da despesa");
-            if (valor <= 0) {
-                throw new IllegalArgumentException("O valor da despesa deve ser maior que zero.");
-            }
-            Financeiro despesa = new Financeiro();
-            despesa.setValorSaida(valor);
-            despesa.setCaixa(decimal(campos[1], "Caixa após a despesa"));
-            if (opcional(campos[2]) != null) {
-                despesa.setCodPedido(inteiro(campos[2], "Código do pedido", 1));
-            }
-            new FinanceiroDAO().inserir(despesa);
-        }, "Valor da despesa", "Caixa após a despesa", "Código do pedido (opcional)");
+        financeiro(tela, atualizarTabela, null);
     }
 
     static void editarFinanceiro(Component tela, JTable tabela, Runnable atualizarTabela) {
-        editar(tela, tabela, linha -> {
-            Object[] valores = {linha[2], linha[3], linha[4], linha[1]};
-            abrir(tela, "Editar Lançamento", atualizarTabela, valores, campos -> {
-                Financeiro registro = new Financeiro();
-                registro.setCodFinanceiro((Integer) linha[0]);
-                double entrada = decimal(campos[0], "Entrada");
-                double saida = decimal(campos[1], "Saída");
-                if (entrada < 0 || saida < 0) {
-                    throw new IllegalArgumentException("Entrada e saída não podem ser negativas.");
-                }
-                registro.setValorEntrada(entrada);
-                registro.setValorSaida(saida);
-                registro.setCaixa(decimal(campos[2], "Caixa"));
-                if (opcional(campos[3]) != null) {
-                    registro.setCodPedido(inteiro(campos[3], "Código do pedido", 1));
-                }
-                new FinanceiroDAO().atualizar(registro);
-            }, "Entrada", "Saída", "Caixa", "Código do pedido (opcional)");
-        });
+        editar(tela, tabela, linha -> financeiro(tela, atualizarTabela, linha));
     }
 
     static void editar(Component tela, JTable tabela, Consumer<Object[]> abrirEdicao) {

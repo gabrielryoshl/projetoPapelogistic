@@ -15,7 +15,7 @@ public class FinanceiroDAO {
 
     
     public void inserir(Financeiro financeiro) {
-        String sql = "INSERT INTO Financeiro (CodFinanceiro, Caixa, ValorEntrada, ValorSaida, CodPedido) VALUES (NULLIF(?, 0), ?, ?, ?, NULLIF(?, 0))";
+        String sql = "INSERT INTO financeiro (CodFinanceiro, Caixa, ValorEntrada, ValorSaida, CodPedido) VALUES (NULLIF(?, 0), ?, ?, ?, NULLIF(?, 0))";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -35,7 +35,7 @@ public class FinanceiroDAO {
     }
 
     public List<Financeiro> listar() {
-        String sql = "SELECT * FROM Financeiro";
+        String sql = "SELECT * FROM financeiro";
         List<Financeiro> listaFinanceiro = new ArrayList<>();
 
         try (Connection conn = Conexao.conectar();
@@ -62,7 +62,7 @@ public class FinanceiroDAO {
 
   
     public void atualizar(Financeiro financeiro) {
-        String sql = "UPDATE Financeiro SET Caixa = ?, ValorEntrada = ?, ValorSaida = ?, CodPedido = NULLIF(?, 0) WHERE CodFinanceiro = ?";
+        String sql = "UPDATE financeiro SET Caixa = ?, ValorEntrada = ?, ValorSaida = ?, CodPedido = NULLIF(?, 0) WHERE CodFinanceiro = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -83,7 +83,7 @@ public class FinanceiroDAO {
 
   
     public void deletar(int codFinanceiro) {
-        String sql = "DELETE FROM Financeiro WHERE CodFinanceiro = ?";
+        String sql = "DELETE FROM financeiro WHERE CodFinanceiro = ?";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

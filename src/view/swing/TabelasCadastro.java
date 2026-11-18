@@ -11,11 +11,13 @@ import javax.swing.table.DefaultTableModel;
 import model.dao.ClienteDAO;
 import model.dao.EstoqueDAO;
 import model.dao.FinanceiroDAO;
+import model.dao.ItemPedidoDAO;
 import model.dao.PedidoDAO;
 import model.dao.ProdutoDAO;
 import model.entidades.Cliente;
 import model.entidades.Estoque;
 import model.entidades.Financeiro;
+import model.entidades.ItemPedido;
 import model.entidades.Pedido;
 import model.entidades.Produto;
 
@@ -73,9 +75,21 @@ final class TabelasCadastro {
     }
 
     static List<Object[]> pedidos() {
+        Map<Integer, List<ItemPedido>> itensPorPedido = new HashMap<>();
+        for (ItemPedido item : new ItemPedidoDAO().listar()) {
+            itensPorPedido.computeIfAbsent(item.getCodPedido(), k -> new ArrayList<>()).add(item);
+        }
         List<Object[]> linhas = new ArrayList<>();
         for (Pedido pedido : new PedidoDAO().listar()) {
-            linhas.add(new Object[]{pedido.getCodPedido(), pedido.getCodCliente()});
+            List<ItemPedido> itens = itensPorPedido.get(pedido.getCodPedido());
+            if (itens == null || itens.isEmpty()) {
+                linhas.add(new Object[]{pedido.getCodPedido(), pedido.getCodCliente(), null, null, null});
+            } else {
+                for (ItemPedido item : itens) {
+                    linhas.add(new Object[]{pedido.getCodPedido(), pedido.getCodCliente(),
+                        item.getCodProduto(), item.getQuantidade(), item.getValorUnitario()});
+                }
+            }
         }
         return linhas;
     }

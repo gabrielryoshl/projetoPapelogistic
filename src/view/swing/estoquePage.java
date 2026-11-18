@@ -20,7 +20,7 @@ public class estoquePage extends javax.swing.JFrame {
         novoProdutoBtn.addActionListener(evt -> Cadastros.produto(this, atualizarTabela, null));
         editarBtn.addActionListener(evt -> Cadastros.editar(this, tabelaTB, linha -> Cadastros.produto(this, atualizarTabela, linha)));
         excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
-            "Remover o item do estoque?", new model.dao.EstoqueDAO()::deletar));
+            "Excluir o produto selecionado do estoque?", new model.dao.ProdutoDAO()::deletar));
         atualizarTabela.run();
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));

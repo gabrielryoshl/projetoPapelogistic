@@ -16,7 +16,8 @@ public class pedidosPage extends javax.swing.JFrame {
     public pedidosPage() {
         initComponents();
         novoProdutoBtn.setText("Novo Pedido");
-        Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::pedidos, "Nº do pedido", "Código do cliente");
+        Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::pedidos,
+            "Nº do pedido", "Código do cliente", "Cód. Produto", "Quantidade", "Valor Unitário");
         novoProdutoBtn.addActionListener(evt -> Cadastros.pedido(this, atualizarTabela, null));
         editarBtn.setText("Editar");
         excluirBtn.setText("Excluir");
