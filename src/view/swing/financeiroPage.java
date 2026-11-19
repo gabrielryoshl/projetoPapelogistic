@@ -17,11 +17,13 @@ public class financeiroPage extends javax.swing.JFrame {
         initComponents();
         novoProdutoBtn.setText("Novo Lançamento");
         Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::financeiro, "Código", "Pedido", "Entrada", "Saída", "Caixa");
+        TabelasCadastro.configurarBusca(tabelaTB, buscarBtn, buscarTxtfld);
         novoProdutoBtn.addActionListener(evt -> Cadastros.financeiro(this, atualizarTabela, null));
         editarBtn.addActionListener(evt -> Cadastros.editarFinanceiro(this, tabelaTB, atualizarTabela));
         excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
             "Excluir o lançamento selecionado?", new model.dao.FinanceiroDAO()::deletar));
         atualizarTabela.run();
+        financeiroBtn.addActionListener(evt -> atualizarTabela.run());
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
     }

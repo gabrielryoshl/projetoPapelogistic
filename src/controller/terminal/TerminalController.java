@@ -71,9 +71,12 @@ public class TerminalController {
             switch (op) {
                 case 1, 3 -> {
                     Cliente registro = new Cliente();
-                    registro.setCliente(tela.inteiro("cliente"));
+                    registro.setCliente(tela.inteiro("codCliente"));
+                    registro.setIdPessoa(tela.texto("idPessoa"));
                     registro.setNomeCliente(tela.texto("nomeCliente"));
-                    registro.setCidade(tela.texto("cidade"));
+                    registro.setEmailCliente(tela.texto("emailCliente"));
+                    registro.setTelefoneCliente(tela.texto("telefoneCliente"));
+                    registro.setCep(tela.texto("cep"));
                     if (op == 1) dao.inserir(registro); else dao.atualizar(registro);
                     tela.mostrar("Operacao concluida.");
                 }
@@ -81,11 +84,13 @@ public class TerminalController {
                     var registros = dao.listar();
                     if (registros.isEmpty()) tela.mostrar("Nenhum registro cadastrado.");
                     for (Cliente r : registros) {
-                        tela.mostrar("cliente=" + r.getCliente() + " | " + "nomeCliente=" + r.getNomeCliente() + " | " + "cidade=" + r.getCidade());
+                        tela.mostrar("codCliente=" + r.getCliente() + " | idPessoa=" + r.getIdPessoa()
+                            + " | nomeCliente=" + r.getNomeCliente() + " | emailCliente=" + r.getEmailCliente()
+                            + " | telefoneCliente=" + r.getTelefoneCliente() + " | cep=" + r.getCep());
                     }
                 }
                 case 4 -> {
-                    int cliente = tela.inteiro("cliente");
+                    int cliente = tela.inteiro("codCliente");
                     if (tela.confirmarExclusao()) {
                         dao.deletar(cliente);
                         tela.mostrar("Exclusao concluida.");
@@ -105,9 +110,9 @@ public class TerminalController {
                 case 1, 3 -> {
                     Produto registro = new Produto();
                     registro.setCodProduto(tela.inteiro("codProduto"));
+                    registro.setNomeProduto(tela.texto("nomeProduto"));
                     registro.setTipo(tela.texto("tipo"));
                     registro.setValor(tela.decimal("valor"));
-                    registro.setQuantidade(tela.inteiro("quantidade"));
                     if (op == 1) dao.inserir(registro); else dao.atualizar(registro);
                     tela.mostrar("Operacao concluida.");
                 }
@@ -115,7 +120,8 @@ public class TerminalController {
                     var registros = dao.listar();
                     if (registros.isEmpty()) tela.mostrar("Nenhum registro cadastrado.");
                     for (Produto r : registros) {
-                        tela.mostrar("codProduto=" + r.getCodProduto() + " | " + "tipo=" + r.getTipo() + " | " + "valor=" + r.getValor() + " | " + "quantidade=" + r.getQuantidade());
+                        tela.mostrar("codProduto=" + r.getCodProduto() + " | nomeProduto=" + r.getNomeProduto()
+                            + " | tipo=" + r.getTipo() + " | valor=" + r.getValor());
                     }
                 }
                 case 4 -> {
@@ -174,8 +180,7 @@ public class TerminalController {
                 case 1, 3 -> {
                     Estoque registro = new Estoque();
                     registro.setCodProduto(tela.inteiro("codProduto"));
-                    registro.setValorProduto(tela.inteiro("valorProduto"));
-                    registro.setTipo(tela.texto("tipo"));
+                    registro.setQuantidade(tela.inteiro("quantidade"));
                     if (op == 1) dao.inserir(registro); else dao.atualizar(registro);
                     tela.mostrar("Operacao concluida.");
                 }
@@ -183,7 +188,7 @@ public class TerminalController {
                     var registros = dao.listar();
                     if (registros.isEmpty()) tela.mostrar("Nenhum registro cadastrado.");
                     for (Estoque r : registros) {
-                        tela.mostrar("codProduto=" + r.getCodProduto() + " | " + "valorProduto=" + r.getValorProduto() + " | " + "tipo=" + r.getTipo());
+                        tela.mostrar("codProduto=" + r.getCodProduto() + " | quantidade=" + r.getQuantidade());
                     }
                 }
                 case 4 -> {

@@ -16,11 +16,13 @@ public class clientesPage extends javax.swing.JFrame {
     public clientesPage() {
         initComponents();
         Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::clientes, "Código", "Cliente", "ID da pessoa", "Telefone", "E-mail", "CEP");
+        TabelasCadastro.configurarBusca(tabelaTB, buscarBtn, buscarTxtfld);
         novoProdutoBtn.addActionListener(evt -> Cadastros.cliente(this, atualizarTabela, null));
         editarBtn.addActionListener(evt -> Cadastros.editar(this, tabelaTB, linha -> Cadastros.cliente(this, atualizarTabela, linha)));
         excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
             "Excluir o cliente selecionado?", new model.dao.ClienteDAO()::deletar));
         atualizarTabela.run();
+        clientesBtn.addActionListener(evt -> atualizarTabela.run());
         pedidosBtn.addActionListener(evt -> Navegacao.abrir(this, new pedidosPage()));
         financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));
     }

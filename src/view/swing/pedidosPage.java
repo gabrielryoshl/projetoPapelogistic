@@ -18,6 +18,7 @@ public class pedidosPage extends javax.swing.JFrame {
         novoProdutoBtn.setText("Novo Pedido");
         Runnable atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::pedidos,
             "Nº do pedido", "Código do cliente", "Cód. Produto", "Quantidade", "Valor Unitário");
+        TabelasCadastro.configurarBusca(tabelaTB, buscarBtn1, buscarTxtfld, buscarTxtfld1);
         novoProdutoBtn.addActionListener(evt -> Cadastros.pedido(this, atualizarTabela, null));
         editarBtn.setText("Editar");
         excluirBtn.setText("Excluir");
@@ -25,6 +26,7 @@ public class pedidosPage extends javax.swing.JFrame {
         excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,
             "Excluir o pedido selecionado e seus itens? Lançamentos vinculados ficarão sem pedido.", new model.dao.PedidoDAO()::deletar));
         atualizarTabela.run();
+        pedidosBtn.addActionListener(evt -> atualizarTabela.run());
         clientesBtn.addActionListener(evt -> Navegacao.abrir(this, new clientesPage()));
         financeiroBtn.addActionListener(evt -> Navegacao.abrir(this, new financeiroPage()));
     }

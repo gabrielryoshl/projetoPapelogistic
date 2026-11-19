@@ -159,11 +159,11 @@ public class LoginPage extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtlblEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtlblEmailActionPerformed
-        // TODO add your handling code here:
+        txtlblEmail1.requestFocusInWindow();
     }//GEN-LAST:event_txtlblEmailActionPerformed
 
     private void txtlblEmail1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtlblEmail1ActionPerformed
-        // TODO add your handling code here:
+        jButton1ActionPerformed(evt);
     }//GEN-LAST:event_txtlblEmail1ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

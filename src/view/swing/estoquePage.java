@@ -17,6 +17,7 @@ public class estoquePage extends javax.swing.JFrame {
     public estoquePage() {
         initComponents();
         atualizarTabela = TabelasCadastro.preparar(tabelaTB, TabelasCadastro::produtos, "Código", "Produto", "Categoria", "Qtd", "Preço");
+        TabelasCadastro.configurarBusca(tabelaTB, buscarBtn, buscarTxtfld);
         novoProdutoBtn.addActionListener(evt -> Cadastros.produto(this, atualizarTabela, null));
         editarBtn.addActionListener(evt -> Cadastros.editar(this, tabelaTB, linha -> Cadastros.produto(this, atualizarTabela, linha)));
         excluirBtn.addActionListener(evt -> Cadastros.excluir(this, tabelaTB, atualizarTabela,

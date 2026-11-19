@@ -27,6 +27,22 @@ CREATE TABLE IF NOT EXISTS produto (
     PRIMARY KEY (CodProduto)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+SET @coluna_nome_produto = (
+    SELECT COUNT(*)
+    FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'produto'
+      AND COLUMN_NAME = 'nomeProduto'
+);
+SET @sql_nome_produto = IF(
+    @coluna_nome_produto = 0,
+    'ALTER TABLE produto ADD COLUMN nomeProduto VARCHAR(150) NOT NULL DEFAULT '''' AFTER CodProduto',
+    'DO 0'
+);
+PREPARE stmt_nome_produto FROM @sql_nome_produto;
+EXECUTE stmt_nome_produto;
+DEALLOCATE PREPARE stmt_nome_produto;
+
 CREATE TABLE IF NOT EXISTS usuario (
     login_simples VARCHAR(50) NOT NULL,
     senha VARCHAR(255) NOT NULL,

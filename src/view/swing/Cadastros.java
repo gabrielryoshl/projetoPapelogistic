@@ -89,9 +89,10 @@ final class Cadastros {
             ItemPedido item = null;
             if (temProduto || temQuantidade || temValor) {
                 item = new ItemPedido();
-                item.setCodProduto(inteiro(campos[1], "Código do produto", 1));
-                item.setQuantidade(inteiro(campos[2], "Quantidade", 1));
-                double valorUnitario = decimal(campos[3], "Valor unitário");
+                int codProduto = inteiro(campos[1], "Código do produto", 1);
+                item.setCodProduto(codProduto);
+                item.setQuantidade(temQuantidade ? inteiro(campos[2], "Quantidade", 1) : 1);
+                double valorUnitario = temValor ? decimal(campos[3], "Valor unitário") : buscarValorProduto(codProduto);
                 if (valorUnitario < 0) {
                     throw new IllegalArgumentException("O valor unitário não pode ser negativo.");
                 }
@@ -120,13 +121,18 @@ final class Cadastros {
                     }
                 }
             } else {
-                dao.inserir(pedido);
-                if (item != null) {
-                    item.setCodPedido(pedido.getCodPedido());
-                    itemDao.inserir(item);
-                }
+                dao.inserirComItem(pedido, item);
             }
         }, "Código do cliente", "Código do produto (opcional)", "Quantidade (opcional)", "Valor unitário (opcional)");
+    }
+
+    private static double buscarValorProduto(int codProduto) {
+        for (Produto produto : new ProdutoDAO().listar()) {
+            if (produto.getCodProduto() == codProduto) {
+                return produto.getValor();
+            }
+        }
+        return 0.0;
     }
 
     static void financeiro(Component tela, Runnable atualizarTabela, Object[] linha) {
@@ -144,7 +150,8 @@ final class Cadastros {
             }
             registro.setValorEntrada(entrada);
             registro.setValorSaida(saida);
-            registro.setCaixa(decimal(campos[2], "Caixa"));
+            double caixa = opcional(campos[2]) == null ? (entrada - saida) : decimal(campos[2], "Caixa");
+            registro.setCaixa(caixa);
             if (opcional(campos[3]) != null) {
                 registro.setCodPedido(inteiro(campos[3], "Código do pedido", 1));
             }
@@ -155,7 +162,7 @@ final class Cadastros {
             } else {
                 dao.inserir(registro);
             }
-        }, "Entrada", "Saída", "Caixa", "Código do pedido (opcional)");
+        }, "Entrada", "Saída", "Caixa (opcional)", "Código do pedido (opcional)");
     }
 
     static void despesa(Component tela, Runnable atualizarTabela) {

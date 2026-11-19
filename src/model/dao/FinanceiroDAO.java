@@ -15,18 +15,23 @@ public class FinanceiroDAO {
 
     
     public void inserir(Financeiro financeiro) {
-        String sql = "INSERT INTO financeiro (CodFinanceiro, Caixa, ValorEntrada, ValorSaida, CodPedido) VALUES (NULLIF(?, 0), ?, ?, ?, NULLIF(?, 0))";
+        String sql = "INSERT INTO financeiro (CodFinanceiro, Caixa, ValorEntrada, ValorSaida, CodPedido) VALUES (?, ?, ?, ?, NULLIF(?, 0))";
 
         try (Connection conn = Conexao.conectar();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, financeiro.getCodFinanceiro());
+            int codigo = financeiro.getCodFinanceiro();
+            if (codigo <= 0) {
+                codigo = Conexao.proximoCodigo(conn, "financeiro", "CodFinanceiro");
+            }
+            stmt.setInt(1, codigo);
             stmt.setDouble(2, financeiro.getCaixa());
             stmt.setDouble(3, financeiro.getValorEntrada());
             stmt.setDouble(4, financeiro.getValorSaida());
             stmt.setInt(5, financeiro.getCodPedido());
 
             if (stmt.executeUpdate() == 0) { throw new SQLException("Nenhum registro afetado. Confira os identificadores informados."); }
+            financeiro.setCodFinanceiro(codigo);
             System.out.println("Registro financeiro cadastrado com sucesso!");
 
         } catch (SQLException e) {
